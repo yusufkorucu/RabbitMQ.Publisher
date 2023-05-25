@@ -1,29 +1,29 @@
 ﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System.Text;
 
 //Connection
 ConnectionFactory connectionFactory = new ConnectionFactory();
 connectionFactory.Uri = new Uri("amqps://utmrfjnx:5EAFe_eJPnPfK04-bk1qfDp6YVP51MbT@chimpanzee.rmq.cloudamqp.com/utmrfjnx");
 
-//Connection active
+//Connection active Channeş Open
 
 using IConnection connection = connectionFactory.CreateConnection();
 using IModel channnel = connection.CreateModel();
 
-//Crete Quee
-channnel.QueueDeclare(queue: "korucu-test-quee", exclusive: false,durable:true);
+// direct exchange
 
-IBasicProperties properties = channnel.CreateBasicProperties();
-properties.Persistent= true;
+channnel.ExchangeDeclare(exchange: "direct-exchange-example", type: ExchangeType.Direct);
 
-//Sending Quee Message RabbitMq Quee sended message byte type
-
-for (int i = 0; i < 25; i++)
+while (true)
 {
-    byte[] message = Encoding.UTF8.GetBytes("korucu test message"+i);
 
-    channnel.BasicPublish(exchange: "", routingKey: "korucu-test-quee", body: message,basicProperties:properties);
+    Console.Write("Mesaj:");
+    string message = Console.ReadLine();
+    byte[] byteMessage = Encoding.UTF8.GetBytes(message);
+    channnel.BasicPublish(
+        exchange: "direct-exchange-example",
+        routingKey: "direct-quee-example",
+        body: byteMessage);
 }
-
-
 Console.Read();
