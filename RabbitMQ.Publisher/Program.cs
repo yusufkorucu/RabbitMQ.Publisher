@@ -10,20 +10,19 @@ connectionFactory.Uri = new Uri("amqps://utmrfjnx:5EAFe_eJPnPfK04-bk1qfDp6YVP51M
 using IConnection connection = connectionFactory.CreateConnection();
 using IModel channnel = connection.CreateModel();
 
-//Crete Quee
-channnel.QueueDeclare(queue: "korucu-test-quee", exclusive: false,durable:true);
 
-IBasicProperties properties = channnel.CreateBasicProperties();
-properties.Persistent= true;
+channnel.ExchangeDeclare(exchange: "fanout-excahnge-example", type: ExchangeType.Fanout);
 
-//Sending Quee Message RabbitMq Quee sended message byte type
-
-for (int i = 0; i < 25; i++)
+for (int i = 0; i < 100; i++)
 {
-    byte[] message = Encoding.UTF8.GetBytes("korucu test message"+i);
+    await Task.Delay(200);
 
-    channnel.BasicPublish(exchange: "", routingKey: "korucu-test-quee", body: message,basicProperties:properties);
+    byte[] message =Encoding.UTF8.GetBytes($"Merhaba {i}");
+
+    //tüm kuyruklara bastıgı için routing key empty gecilir
+    channnel.BasicPublish(exchange: "fanout-excahnge-example",
+        routingKey: string.Empty,
+        body: message);
 }
-
 
 Console.Read();
