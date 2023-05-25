@@ -20,7 +20,7 @@ for (int i = 0; i < 100; i++)
 {
     await Task.Delay(200);
     byte[] message = Encoding.UTF8.GetBytes("korucu test message" + i);
-    Console.WriteLine("topic gir");
+    Console.WriteLine("mesajın gönderileceği topic formatını belirtiniz");
     string topic = Console.ReadLine();
     
     channnel.BasicPublish(
